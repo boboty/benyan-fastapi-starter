@@ -1,6 +1,6 @@
 VENV_BIN := .venv/bin
 
-.PHONY: check run
+.PHONY: check smoke run
 check:
 	$(VENV_BIN)/ruff check .
 	$(VENV_BIN)/pyright
@@ -8,3 +8,6 @@ check:
 
 run:
 	$(VENV_BIN)/uvicorn app.main:app
+
+smoke:
+	./scripts/smoke_test.sh

@@ -1,6 +1,6 @@
 # 项目规则
 
-技术栈：Python 3.12+、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、PostgreSQL、pytest、ruff、pyright。常用命令：`make check`、`make run`。
+技术栈：Python 3.12+、FastAPI、Pydantic v2、SQLAlchemy 2、Alembic、PostgreSQL、pytest、ruff、pyright。常用命令：`make check`、`make smoke`、`make run`。
 
 修改前阅读现有实现；不要不了解架构便大范围重构。`api/` 管 HTTP，`core/` 管通用运行机制，`db/` 管连接；模型、服务、仓储仅在真实业务出现时增加。Python 使用 snake_case / PascalCase / UPPER_SNAKE_CASE。不要创建无业务意义的抽象。
 

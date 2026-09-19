@@ -6,6 +6,9 @@ from datetime import UTC, datetime
 from app.core.config import settings
 
 request_id_context: ContextVar[str] = ContextVar("request_id", default="-")
+LOG_RECORD_FIELDS = frozenset(logging.makeLogRecord({}).__dict__) | {"message", "asctime"}
+BASE_FIELDS = frozenset({"timestamp", "level", "service", "event", "request_id", "exception"})
+SENSITIVE_FIELD_PARTS = ("password", "token", "secret", "api_key", "authorization", "cookie")
 
 
 class JsonFormatter(logging.Formatter):
@@ -17,12 +20,18 @@ class JsonFormatter(logging.Formatter):
             "event": record.getMessage(),
             "request_id": request_id_context.get(),
         }
-        for key in ("method", "path", "status_code", "duration_ms"):
-            if hasattr(record, key):
-                entry[key] = getattr(record, key)
+        for key, value in record.__dict__.items():
+            if key in LOG_RECORD_FIELDS or key in BASE_FIELDS:
+                continue
+            if any(part in key.lower() for part in SENSITIVE_FIELD_PARTS):
+                entry[key] = "[REDACTED]"
+            else:
+                entry[key] = value
         if record.exc_info:
             entry["exception"] = self.formatException(record.exc_info)
-        return json.dumps(entry, ensure_ascii=False)
+        return json.dumps(
+            entry, ensure_ascii=False, default=lambda value: f"<{type(value).__name__}>"
+        )
 
 
 def configure_logging(json_output: bool) -> None:

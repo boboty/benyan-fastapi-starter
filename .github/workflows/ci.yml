@@ -10,3 +10,4 @@ jobs:
           python-version: '3.12'
       - run: python -m venv .venv && .venv/bin/pip install -e '.[dev]'
       - run: make check
+      - run: make smoke
