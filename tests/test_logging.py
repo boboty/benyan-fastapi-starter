@@ -13,6 +13,10 @@ def test_json_formatter_includes_business_extra_without_internal_fields() -> Non
             "duration_ms": 120,
             "result": "success",
             "retry_count": 0,
+            "input_tokens": 120,
+            "output_tokens": 45,
+            "token_count": 165,
+            "token_usage": {"total": 165},
         },
     )
     token = request_id_context.set("req_logging_test")
@@ -26,6 +30,8 @@ def test_json_formatter_includes_business_extra_without_internal_fields() -> Non
     for key, value in {
         "provider": "openai", "operation": "responses.create", "duration_ms": 120,
         "result": "success", "retry_count": 0,
+        "input_tokens": 120, "output_tokens": 45, "token_count": 165,
+        "token_usage": {"total": 165},
     }.items():
         assert entry[key] == value
     assert not {"name", "msg", "args", "pathname", "levelname", "created"} & entry.keys()
@@ -34,8 +40,15 @@ def test_json_formatter_includes_business_extra_without_internal_fields() -> Non
 def test_json_formatter_redacts_sensitive_extra() -> None:
     record = logging.getLogger("app").makeRecord(
         "app", logging.INFO, __file__, 12, "external_call", (), None,
-        extra={"access_token": "private", "provider": "openai"},
+        extra={
+            "access_token": "private-access",
+            "refresh_token": "private-refresh",
+            "api_key": "private-key",
+            "authorization": "private-auth",
+            "provider": "openai",
+        },
     )
     entry = json.loads(JsonFormatter().format(record))
-    assert entry["access_token"] == "[REDACTED]"
+    for key in ("access_token", "refresh_token", "api_key", "authorization"):
+        assert entry[key] == "[REDACTED]"
     assert "private" not in json.dumps(entry)

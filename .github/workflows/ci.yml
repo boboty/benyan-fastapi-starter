@@ -11,3 +11,5 @@ jobs:
       - run: python -m venv .venv && .venv/bin/pip install -e '.[dev]'
       - run: make check
       - run: make smoke
+      - run: docker build -t benyan-fastapi-starter:ci .
+      - run: docker run --rm benyan-fastapi-starter:ci alembic --help
