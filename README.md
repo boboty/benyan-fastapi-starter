@@ -1,6 +1,6 @@
 # BenYan FastAPI Starter
 
-BenYan Demo、原型和初始产品的可运行起点。继承 BenYan Engineering Standard v1.0.0；项目级例外写入 [AGENTS.md](AGENTS.md)。
+BenYan 纯 API / Agent / Backend 项目的可运行起点。继承 BenYan Engineering Standard v1.1.0；项目级例外写入 [AGENTS.md](AGENTS.md)。需要完整 React Web App 时使用 `benyan-webapp-starter`。
 
 ## 快速开始
 
